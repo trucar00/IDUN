@@ -27,7 +27,7 @@ CLUSTER_PATH = f"clusters_{TRAJECTORY_LENGTH}h.json"
 #LATENT_PATH = f"Model/{TRAJECTORY_LENGTH}h/"
 
 def main():
-    folder_paths = [FILTERED_PATH, CONCAT_PATH, CLEAN_PATH, RESAMPLE_PATH, TRAINING_SETS_PATH]
+    folder_paths = [FILTERED_PATH, CONCAT_PATH, CLEAN_PATH, RESAMPLE_PATH]
 
     for p in folder_paths:
         path = Path(p)

@@ -11,7 +11,7 @@ def main(months, days, filtered_path):
     print("Getting data from NTNUs copy of AIS-data from Kystverket.")
     for month in range(1,months+1):
         for day in range(1, days+1):
-            filepath = f"~2024/date_utc=2024-{month:02d}-{day:02d}"
+            filepath = f"~Data-preMaster/2024/date_utc=2024-{month:02d}-{day:02d}"
             if os.path.exists(filepath):
                 for entry in os.scandir(filepath):
                     if entry.is_file() and entry.name.endswith(".parquet"):
