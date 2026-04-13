@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=trulsc
+#SBATCH --account=share-ie-itk
 #SBATCH --partition=short
 #SBATCH --job-name=python-test
 #SBATCH --nodes=2
