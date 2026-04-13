@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=trulsc@idun-login1.hpc.ntnu.no
+#SBATCH --account=trulsc
 #SBATCH --partition=short
 #SBATCH --job-name=python-test
 #SBATCH --nodes=2
