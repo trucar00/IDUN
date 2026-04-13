@@ -13,5 +13,8 @@
 module purge
 module load Python/3.11.5-GCCcore-13.2.0
 
+# Activate venv
+source ~/venv/myenv/bin/activate
+
 # Run your script
 python run.py
