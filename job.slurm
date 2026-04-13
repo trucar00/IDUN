@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --account=share-ie-itk
-#SBATCH --partition=short
+#SBATCH --partition=
 #SBATCH --nodes=1             # 1 compute nodes
-#SBATCH --cpus-per-task=2     # 2 CPU cores
-#SBATCH --mem=5G              # 5 GB memory
-#SBATCH --output=hello.txt    # Log file
+#SBATCH --cpus-per-task=32     # 2 CPU cores
+#SBATCH --mem=200G              # GB memory
+#SBATCH --output=output.txt    # Log file
 
 # Go to submission folder
 # cd 
