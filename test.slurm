@@ -1,11 +1,9 @@
 #!/bin/bash
-#SBATCH --account=trulsc
+#SBATCH --account=trulsc@idun-login1.hpc.ntnu.no
 #SBATCH --partition=short
 #SBATCH --job-name=python-test
 #SBATCH --nodes=2
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=1G
-#SBATCH --output=slurm-%j.out
+#SBATCH --ntasks-per-node=3
 
 # Go to submission folder
 # cd 
