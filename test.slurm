@@ -1,9 +1,10 @@
 #!/bin/bash
 #SBATCH --account=share-ie-itk
 #SBATCH --partition=short
-#SBATCH --job-name=python-test
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=3
+#SBATCH --nodes=1             # 1 compute nodes
+#SBATCH --cpus-per-task=2     # 2 CPU cores
+#SBATCH --mem=5G              # 5 GB memory
+#SBATCH --output=hello.txt    # Log file
 
 # Go to submission folder
 # cd 
