@@ -10,7 +10,7 @@
 # #SBATCH --mail-type=ALL
 
 # Go to submission folder
-cd /cluster/home/trulsc/Test/IDUN
+cd ~/Test/IDUN
 
 # Load Python
 module purge
