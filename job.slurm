@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=64     # 2 CPU cores
 #SBATCH --mem=128G             # GB memory
 #SBATCH --output=output.txt    # Log file
-# #SBATCH --mail-user=trulsc00@gmail.com
-# #SBATCH --mail-type=ALL
+#SBATCH --mail-user=trulsc00@gmail.com
+#SBATCH --mail-type=ALL
 
 # Go to submission folder
 cd ~/Test/IDUN
