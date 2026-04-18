@@ -9,7 +9,7 @@ YEAR = 2024
 MONTHS = 12
 DAYS = 30
 
-TRAJECTORY_LENGTH = 1 #hours
+TRAJECTORY_LENGTH = 2 #hours
 RESAMPLE_STEP = "1min"
 
 AIS_PATH = f"{YEAR}/date_utc={YEAR}"
@@ -45,14 +45,8 @@ def main():
     
     concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
     cleanAIS.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH, traj_length=TRAJECTORY_LENGTH)
-    downSample.main(cleaned_path=CLEAN_PATH, resampled_path=RESAMPLE_PATH, step=RESAMPLE_STEP, months=MONTHS)
+    #downSample.main(cleaned_path=CLEAN_PATH, resampled_path=RESAMPLE_PATH, step=RESAMPLE_STEP, months=MONTHS)
 
-    #buildTrainingSets.main(resampled_path=RESAMPLE_PATH, training_path=TRAINING_SETS_PATH, months=MONTHS, traj_length=TRAJECTORY_LENGTH)
-    #makeh5.createh5(training_path=TRAINING_SETS_PATH, traj_length=TRAJECTORY_LENGTH, trajectories_path=TRAJECTORIES_PATH)
-    #autoencoder.main(trajectories_path=TRAJECTORIES_PATH, ae_path=AUTOENCODER_PATH, traj_length=TRAJECTORY_LENGTH)
-    #latentSpacePlot.main(latent_space_path=AUTOENCODER_PATH, featureset_path=TRAINING_SETS_PATH)
-    #clusterFunc.main(latent_space_path=AUTOENCODER_PATH, featureset_path=TRAINING_SETS_PATH, clusters_path=CLUSTER_PATH, saveClusters=True)
-    #cluster_plot
 
 
 if __name__ == "__main__":

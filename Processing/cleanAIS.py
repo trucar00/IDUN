@@ -72,7 +72,7 @@ def remove_invalid(df, min_cog=0, max_cog=360, min_speed=0, max_speed=30):
 
     return df[valid_mask]
 
-def extract_trajectories(df, time_threshold="60min"):
+def extract_trajectories(df, time_threshold="120min"):
     df = df.sort_values(["mmsi", "date_time_utc"])
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 
@@ -156,14 +156,14 @@ def haversine(lat1, lon1, lat2, lon2, dt):
     c = 2 * np.arcsin(np.sqrt(a))
 
     dist = R * c
-    speed = (dist/dt) * 1.94384 # Convert m/s to knots
+    speed = (dist/dt)
 
     return dist, speed
 
-def remove_outlier_positions(df, max_speed = 30):
+def remove_outlier_positions(df, max_speed = 15): # m/s -> 54 km/h 
     print("Removing trajectory outliers (impossible jumps)")
+
     df = df.sort_values(["trajectory_id", "date_time_utc"])
-    df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 
     df["dt_fwd"] = df.groupby("trajectory_id")["date_time_utc"].diff().shift(-1).dt.total_seconds()
     df["dt_bwd"] = df.groupby("trajectory_id")["date_time_utc"].diff().dt.total_seconds()
@@ -173,26 +173,30 @@ def remove_outlier_positions(df, max_speed = 30):
     df["lat_next"] = df.groupby("trajectory_id")["lat"].shift(-1)
     df["lon_next"] = df.groupby("trajectory_id")["lon"].shift(-1)
 
-    df["del_m_fwd"], df["speed_fwd"] = haversine(df["lat"], df["lon"], df["lat_next"], df["lon_next"], df["dt_fwd"])
-    df["del_m_bwd"], df["speed_bwd"] = haversine(df["lat_prev"], df["lon_prev"], df["lat"], df["lon"], df["dt_bwd"])
+    df["del_m_fwd"], df["speed_fwd_ms"] = haversine(df["lat"], df["lon"], df["lat_next"], df["lon_next"], df["dt_fwd"])
+    df["del_m_bwd"], df["speed_bwd_ms"] = haversine(df["lat_prev"], df["lon_prev"], df["lat"], df["lon"], df["dt_bwd"])
 
-    df["del_speed_fwd"] = df.groupby("trajectory_id")["speed"].diff().shift(-1)
-    df["del_speed_bwd"] = df.groupby("trajectory_id")["speed"].diff()
+
+    df["del_speed_fwd"] = df.groupby("trajectory_id")["speed_fwd_ms"].diff().shift(-1)
+    df["del_speed_bwd"] = df.groupby("trajectory_id")["speed_bwd_ms"].diff()
     
-    df["accel_fwd"] = (df["del_speed_fwd"] / 1.94384) / df["dt_fwd"] # clean up the ms to knots thing?
-    df["accel_bwd"] = (df["del_speed_bwd"] / 1.94384) / df["dt_bwd"]
+    df["accel_fwd"] = (df["del_speed_fwd"]) / df["dt_fwd"]
+    df["accel_bwd"] = (df["del_speed_bwd"]) / df["dt_bwd"]
 
 
-    jump_mask = (df["speed_bwd"] > max_speed) & (df["speed_fwd"] > max_speed)
-    accel_mask = (df["accel_fwd"].abs() > 0.10) & (df["accel_bwd"].abs() > 0.10)
+    jump_mask = (df["speed_bwd_ms"] > max_speed) | (df["speed_fwd_ms"] > max_speed)
+    accel_mask = (df["accel_fwd"].abs() > 0.25) | (df["accel_bwd"].abs() > 0.25)
 
     outlier_mask = jump_mask | accel_mask
 
     df_filtered = df[~outlier_mask].drop(columns=[
         "dt_fwd", "dt_bwd",
         "lat_prev", "lon_prev", "lat_next", "lon_next",
-        "del_m_fwd", "del_m_bwd", "del_speed_fwd", "del_speed_bwd", "speed_fwd", "speed_bwd", "accel_fwd", "accel_bwd"
+        "del_m_fwd", "del_m_bwd", "del_speed_fwd", "del_speed_bwd", "speed_fwd_ms", "accel_fwd"
     ])
+    
+    df_filtered = df_filtered.rename(columns={"speed_bwd_ms": "speed_calc", "accel_bwd": "accel_calc"})
+    df_filtered = df_filtered.dropna(subset=["speed_calc_ms", "accel_calc"])
 
     print(f"Removed {outlier_mask.sum():,} outlier points")
 
