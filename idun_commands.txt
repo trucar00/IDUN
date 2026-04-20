@@ -1,1 +1,3 @@
 login: ssh trulsc@idun-login1.hpc.ntnu.no
+view file: vi filename
+exit file: :qa ENTER
