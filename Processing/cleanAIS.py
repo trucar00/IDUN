@@ -252,7 +252,7 @@ def all(df, traj_length):
 def main(months, concat_path, cleaned_path, traj_length):
     start = time()
 
-    for month in range(2,months+1):
+    for month in range(1,months+1):
         getfile = f"{concat_path}{month:02d}.parquet"
         savefile = f"{cleaned_path}{month:02d}.csv" # Remove
         #savefile = f"{cleaned_path}.csv"

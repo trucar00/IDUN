@@ -44,7 +44,7 @@ def main():
     #concatParquets.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
     
     concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
-    cleanAIS.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH, traj_length=TRAJECTORY_LENGTH)
+    #cleanAIS.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH, traj_length=TRAJECTORY_LENGTH)
     #downSample.main(cleaned_path=CLEAN_PATH, resampled_path=RESAMPLE_PATH, step=RESAMPLE_STEP, months=MONTHS)
 
 
