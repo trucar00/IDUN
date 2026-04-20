@@ -195,8 +195,8 @@ def remove_outlier_positions(df, max_speed = 15): # m/s -> 54 km/h
         "del_m_fwd", "del_m_bwd", "del_speed_fwd", "del_speed_bwd", "speed_fwd_ms", "accel_fwd"
     ])
     
-    df_filtered = df_filtered.rename(columns={"speed_bwd_ms": "speed_calc", "accel_bwd": "accel_calc"})
-    df_filtered = df_filtered.dropna(subset=["speed_calc_ms", "accel_calc"])
+    df_filtered = df_filtered.rename(columns={"speed_bwd_ms": "speed_calc_ms", "accel_bwd": "accel_calc_ms"})
+    df_filtered = df_filtered.dropna(subset=["speed_calc_ms", "accel_calc_ms"])
 
     print(f"Removed {outlier_mask.sum():,} outlier points")
 
