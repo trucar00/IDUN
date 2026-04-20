@@ -254,7 +254,7 @@ def main(months, concat_path, cleaned_path, traj_length):
 
     for month in range(1,months+1):
         getfile = f"{concat_path}{month:02d}.parquet"
-        savefile = f"{cleaned_path}{month:02d}.csv" # Remove
+        savefile = f"{cleaned_path}{month:02d}.parquet" # Remove
         #savefile = f"{cleaned_path}.csv"
         if os.path.exists(getfile):
             print("Cleaning up: ", getfile)
