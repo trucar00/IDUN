@@ -260,7 +260,8 @@ def main(months, concat_path, cleaned_path, traj_length):
             print("Cleaning up: ", getfile)
             df = pd.read_parquet(getfile)
             df = all(df, traj_length)
-            df.to_csv(savefile, index=False)
+            #df.to_csv(savefile, index=False)
+            df.to_parquet(savefile, engine="pyarrow", compression="snappy")
             print("Saved cleaned data to: ", savefile)          
         else:
             print("Missing: ", getfile)

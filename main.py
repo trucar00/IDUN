@@ -17,7 +17,7 @@ FILTERED_PATH = f"Processed_AIS_{YEAR}/Parquets/"
 CONCAT_PATH = f"Processed_AIS_{YEAR}/Concatenated/"
 
 GEAR_PATH = f"Processed_AIS_{YEAR}/gear_specific/not_feb_2024.csv"
-CLEAN_PATH = f"Processed_AIS_{YEAR}/Cleaned/"
+CLEAN_PATH = f"Processed_AIS_{YEAR}/Cleaned_pq/"
 
 RESAMPLE_PATH = f"Processed_AIS_{YEAR}/Resampled/"
 TRAINING_SETS_PATH = f"Training_sets_{YEAR}/{TRAJECTORY_LENGTH}h/"
