@@ -211,7 +211,7 @@ def all(df):
     df = df.drop(columns=["dsrc", "imo", "ship_type", "maneuvre", "geom", "status", "rot", "true_heading", "length", "draught", "ais_class", "geometry_wkt"])
     return df
 
-def main(months, concat_path, cleaned_path, traj_length):
+def main(months, concat_path, cleaned_path):
     start = time()
 
     for month in range(1,months+1):
@@ -221,7 +221,7 @@ def main(months, concat_path, cleaned_path, traj_length):
         if os.path.exists(getfile):
             print("Cleaning up: ", getfile)
             df = pd.read_parquet(getfile)
-            df = all(df, traj_length)
+            df = all(df)
             #df.to_csv(savefile, index=False)
             df.to_parquet(savefile, engine="pyarrow", compression="snappy")
             print("Saved cleaned data to: ", savefile)          
@@ -234,15 +234,15 @@ def main(months, concat_path, cleaned_path, traj_length):
     return
 
 if __name__ == "__main__":
-    #main()
-    df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
-    print(df.columns)
+    main()
+    # df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
+    # print(df.columns)
 
-    mmsis = df["mmsi"].drop_duplicates().head(25)
-    df_small = df[df["mmsi"].isin(mmsis)].copy()
+    # mmsis = df["mmsi"].drop_duplicates().head(25)
+    # df_small = df[df["mmsi"].isin(mmsis)].copy()
 
-    df_small = all(df_small)
-    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
+    # df_small = all(df_small)
+    # df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
 
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!
