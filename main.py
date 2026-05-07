@@ -5,7 +5,7 @@ from Processing import getData, concatParquets, cleanAIS, downSample #, buildTra
 # Need folder paths, anc creation of these folders if they dont exist?
 
 # Define the time period we are interested in
-YEAR = 2024
+YEAR = 2023
 MONTHS = 12
 DAYS = 30
 
@@ -40,11 +40,11 @@ def main():
 
     #getData.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH) #choose nr of days
     
-    #getData.main2(months=MONTHS, filtered_path=FILTERED_PATH) # all days in each month
+    getData.main2(months=MONTHS, filtered_path=FILTERED_PATH, year=YEAR) # all days in each month
     #concatParquets.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
     
-    #concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
-    cleanAIS.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH, traj_length=TRAJECTORY_LENGTH)
+    concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
+    #cleanAIS.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH, traj_length=TRAJECTORY_LENGTH)
     #downSample.main(cleaned_path=CLEAN_PATH, resampled_path=RESAMPLE_PATH, step=RESAMPLE_STEP, months=MONTHS)
 
 
