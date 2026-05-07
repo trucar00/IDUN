@@ -1,2 +1,4 @@
 __pycache__
 Processing/__pycache__
+*.csv
+*.parquet

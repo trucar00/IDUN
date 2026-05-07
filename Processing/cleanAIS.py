@@ -272,4 +272,14 @@ def main(months, concat_path, cleaned_path, traj_length):
     return
 
 if __name__ == "__main__":
-    main()
+    #main()
+    df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
+    print(df.columns)
+
+    mmsis = df["mmsi"].drop_duplicates().head(25)
+    df_small = df[df["mmsi"].isin(mmsis)].copy()
+
+    df_small = all(df_small, 2)
+    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_old_clean.parquet", index=False)
+
+    # OLD CLEANING

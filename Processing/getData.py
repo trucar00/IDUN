@@ -47,3 +47,4 @@ def main2(months, filtered_path, year):
 
 if __name__ == "__main__":
     main(months=12, days=5, filtered_path="2024")
+    #dataProcessing.readFilterSave("Processed_AIS_2024/Parquets/raw_01.parquet", "filtered_01.parquet") #use readFilterSave2 for STS
