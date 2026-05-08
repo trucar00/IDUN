@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet")
 old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean.parquet")
+print("new: ", new_df.shape, " old: ", old_df.shape)
+print(new_df.columns, old_df.columns)
 
 new_df["date_time_utc"] = pd.to_datetime(new_df["date_time_utc"])
 old_df["date_time_utc"] = pd.to_datetime(old_df["date_time_utc"])
@@ -20,6 +22,7 @@ def plot_mmsi(mmsi):
     for traj_id, d in old_dd.groupby("trajectory_id"):
         d = d.sort_values("date_time_utc")
         ax1.plot(d["lon"], d["lat"], ".", markersize=2)
+        call = d["callsign"].iloc[0]
 
     ax1.set_title("Old cleaning")
 
@@ -34,7 +37,7 @@ def plot_mmsi(mmsi):
     ax1.set_aspect('equal', adjustable='box')
     ax2.set_aspect('equal', adjustable='box')
 
-    plt.suptitle(f"MMSI: {mmsi}")
+    plt.suptitle(f"MMSI: {mmsi}, {call}")
     plt.tight_layout()
     plt.show()
 

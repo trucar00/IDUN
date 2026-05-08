@@ -148,36 +148,33 @@ def remove_trajectories_w_low_avg_speed(df, min_avg_speed_knots=1):
     
     return df
 
-def remove_spikes_three_point(df):
+
+def remove_spikes_three_point(df, ratio_threshold=0.5, min_perp=5):
     df = df.copy()
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
     df = df.sort_values(["trajectory_id", "date_time_utc"])
 
     g = df.groupby("trajectory_id", sort=False)
+    lat_prev = g["lat"].shift(1);  lon_prev = g["lon"].shift(1)
+    lat_next = g["lat"].shift(-1); lon_next = g["lon"].shift(-1)
 
-    df["lat_prev"] = g["lat"].shift(1)
-    df["lon_prev"] = g["lon"].shift(1)
+    d_ab, _ = haversine(lat_prev, lon_prev, df["lat"], df["lon"], 1)
+    d_bc, _ = haversine(df["lat"], df["lon"], lat_next, lon_next, 1)
+    d_ac, _ = haversine(lat_prev, lon_prev, lat_next, lon_next, 1)
 
-    df["lat_next"] = g["lat"].shift(-1)
-    df["lon_next"] = g["lon"].shift(-1)
+    # Heron -> perpendicular distance from B to line AC
+    s = 0.5 * (d_ab + d_bc + d_ac)
+    area = np.sqrt(np.clip(s * (s - d_ab) * (s - d_bc) * (s - d_ac), 0, None))
+    d_ac_safe = d_ac.replace(0, np.nan)
+    perp_dist = (2 * area) / d_ac_safe
+    ratio = perp_dist / d_ac_safe
 
-    d_ab, _ = haversine(df["lat_prev"], df["lon_prev"], df["lat"], df["lon"], 1)
-    d_bc, _ = haversine(df["lat"], df["lon"], df["lat_next"], df["lon_next"], 1)
-    d_ac, _ = haversine(df["lat_prev"], df["lon_prev"], df["lat_next"], df["lon_next"], 1)
-
-    # Herons formula
-    s = 0.5*(d_ab + d_bc + d_ac)
-    area = np.sqrt(np.clip(s*(s-d_ab)*(s-d_bc)*(s-d_ac), 0, None))
-    perp_dist = (2 * area) / d_ac.replace(0, np.nan)
-
-    spike = (perp_dist > 25) & (d_ac > 10) 
+    spike = ((ratio > ratio_threshold) & (perp_dist > min_perp)).fillna(False)
 
     print(f"Removed {spike.sum():,} three-point spikes")
-
-    return df.loc[~spike].drop(columns=[
-        "lat_prev", "lon_prev",
-        "lat_next", "lon_next"
-    ])
+    return df.loc[~spike].drop(columns=["lat_prev", "lon_prev",
+                                        "lat_next", "lon_next"],
+                               errors="ignore")
 
 def reindex_trajectory_ids(df):
     print("Reindexing trajectory IDs")
@@ -243,6 +240,6 @@ if __name__ == "__main__":
 
     df_small = all(df_small)
     df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
-
+    #print(haversine(70.658328, 21.261674, 70.658555, 21.261692, 1))
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!
