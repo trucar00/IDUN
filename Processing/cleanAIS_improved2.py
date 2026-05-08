@@ -120,7 +120,7 @@ def remove_trajectories_few_instances(df, min_instances=100):
 
     return df_filtered
 
-def remove_short_trajectories(df, traj_length=30):
+def remove_short_trajectories(df, traj_length=15):
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 
     durations = (
@@ -231,15 +231,15 @@ def main(months, concat_path, cleaned_path):
     return
 
 if __name__ == "__main__":
-    main()
-    # df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
-    # print(df.columns)
+    #main()
+    df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
+    print(df.columns)
 
-    # mmsis = df["mmsi"].drop_duplicates().head(25)
-    # df_small = df[df["mmsi"].isin(mmsis)].copy()
+    mmsis = df["mmsi"].drop_duplicates().head(25)
+    df_small = df[df["mmsi"].isin(mmsis)].copy()
 
-    # df_small = all(df_small)
-    # df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
+    df_small = all(df_small)
+    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
 
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!
