@@ -96,7 +96,7 @@ def remove_stationary(df, speed_threshold=0.5, min_duration="15min"):
 
     return df.drop(columns=["stationary", "grp"])
 
-def extract_trajectories(df, time_threshold="120min"):
+def extract_trajectories(df, time_threshold="60min"):
     df = df.sort_values(["mmsi", "date_time_utc"])
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 
@@ -120,7 +120,7 @@ def remove_trajectories_few_instances(df, min_instances=100):
 
     return df_filtered
 
-def remove_short_trajectories(df, traj_length=15):
+def remove_short_trajectories(df, traj_length=30):
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 
     durations = (

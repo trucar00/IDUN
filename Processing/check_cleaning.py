@@ -22,7 +22,12 @@ def plot_mmsi(mmsi):
     for traj_id, d in old_dd.groupby("trajectory_id"):
         d = d.sort_values("date_time_utc")
         ax1.plot(d["lon"], d["lat"], ".", markersize=2)
-        call = d["callsign"].iloc[0]
+
+        if not d.empty:
+            call = d["callsign"].iloc[0]
+        else:
+            call = None  # or handle it differently
+
 
     ax1.set_title("Old cleaning")
 
@@ -37,7 +42,7 @@ def plot_mmsi(mmsi):
     ax1.set_aspect('equal', adjustable='box')
     ax2.set_aspect('equal', adjustable='box')
 
-    plt.suptitle(f"MMSI: {mmsi}, {call}")
+    plt.suptitle(f"MMSI: {mmsi}")
     plt.tight_layout()
     plt.show()
 
