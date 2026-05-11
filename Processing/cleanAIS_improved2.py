@@ -108,6 +108,24 @@ def extract_trajectories(df, time_threshold="60min"):
 
     return df.drop(columns=["dt", "traj_id"])
 
+def remove_duplicate_positions(df):
+    print("Removing duplicate positions per trajectory")
+
+    df = df.copy()
+    df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
+
+    before = len(df)
+
+    df = (
+        df.sort_values(["trajectory_id", "date_time_utc"])
+          .drop_duplicates(subset=["trajectory_id", "lat", "lon"], keep="first")
+    )
+
+    removed = before - len(df)
+    print(f"Removed {removed:,} duplicate-position rows")
+
+    return df
+
 def remove_trajectories_few_instances(df, min_instances=100):
     print(f"Removing trajectories with fewer than {min_instances} messages")
 
@@ -149,7 +167,10 @@ def remove_trajectories_w_low_avg_speed(df, min_avg_speed_knots=1):
     return df
 
 
-def remove_spikes_three_point(df, ratio_threshold=0.5, min_perp=5):
+
+def remove_spikes_three_point(df,
+                              perp_ratio_threshold=0.5, min_perp=5.0,
+                              path_ratio_threshold=3.0, min_excursion=100.0):
     df = df.copy()
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
     df = df.sort_values(["trajectory_id", "date_time_utc"])
@@ -162,19 +183,25 @@ def remove_spikes_three_point(df, ratio_threshold=0.5, min_perp=5):
     d_bc, _ = haversine(df["lat"], df["lon"], lat_next, lon_next, 1)
     d_ac, _ = haversine(lat_prev, lon_prev, lat_next, lon_next, 1)
 
-    # Heron -> perpendicular distance from B to line AC
+    d_ac_safe = d_ac.replace(0, np.nan)
+
+    # Test 1: perpendicular offset, Heron -> perpendicular distance from B to line AC
     s = 0.5 * (d_ab + d_bc + d_ac)
     area = np.sqrt(np.clip(s * (s - d_ab) * (s - d_bc) * (s - d_ac), 0, None))
-    d_ac_safe = d_ac.replace(0, np.nan)
     perp_dist = (2 * area) / d_ac_safe
-    ratio = perp_dist / d_ac_safe
+    off_axis = (perp_dist / d_ac_safe > perp_ratio_threshold) & (perp_dist > min_perp)
 
-    spike = ((ratio > ratio_threshold) & (perp_dist > min_perp)).fillna(False)
+    # Test 2: detour vs direct path, comparing dist AB and BC with dist AC. If AB AND BC >> AC -> spike
+    path_ratio = (d_ab + d_bc) / d_ac_safe
+    out_and_back = (path_ratio > path_ratio_threshold) & ((d_ab + d_bc) > min_excursion)
 
-    print(f"Removed {spike.sum():,} three-point spikes")
-    return df.loc[~spike].drop(columns=["lat_prev", "lon_prev",
-                                        "lat_next", "lon_next"],
-                               errors="ignore")
+    spike = (off_axis | out_and_back).fillna(False)
+
+    print(f"Removed {spike.sum():,} three-point spikes "
+          f"(off-axis: {off_axis.fillna(False).sum():,}, "
+          f"out-and-back: {out_and_back.fillna(False).sum():,})")
+
+    return df.loc[~spike]                               
 
 def reindex_trajectory_ids(df):
     print("Reindexing trajectory IDs")
@@ -200,6 +227,7 @@ def all(df):
     df = remove_invalid(df)
     df = remove_stationary(df)
     df = extract_trajectories(df)
+    df = remove_duplicate_positions(df)
     df = remove_trajectories_w_low_avg_speed(df)
     df = remove_short_trajectories(df)
     df = remove_trajectories_few_instances(df)
@@ -239,7 +267,7 @@ if __name__ == "__main__":
     df_small = df[df["mmsi"].isin(mmsis)].copy()
 
     df_small = all(df_small)
-    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet", index=False)
+    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_mix_2024_new.parquet", index=False)
 
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!

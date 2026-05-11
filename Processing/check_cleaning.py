@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_mix.parquet")
+new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_mix_2024_new.parquet")
 old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean.parquet")
 print("new: ", new_df.shape, " old: ", old_df.shape)
 print(new_df.columns, old_df.columns)
