@@ -5,7 +5,7 @@ from Processing import getData, concatParquets, cleanAIS_improved2, downSample #
 # Need folder paths, anc creation of these folders if they dont exist?
 
 # Define the time period we are interested in
-YEAR = 2024
+YEAR = 2022
 MONTHS = 12
 DAYS = 30
 
@@ -17,7 +17,7 @@ FILTERED_PATH = f"Processed_AIS_{YEAR}/Parquets/"
 CONCAT_PATH = f"Processed_AIS_{YEAR}/Concatenated/"
 
 GEAR_PATH = f"Processed_AIS_{YEAR}/gear_specific/not_feb_2024.csv"
-CLEAN_PATH = f"Processed_AIS_{YEAR}/Cleaned_pq_new2/"
+CLEAN_PATH = f"Processed_AIS_{YEAR}/Cleaned_pq/"
 
 RESAMPLE_PATH = f"Processed_AIS_{YEAR}/Resampled/"
 TRAINING_SETS_PATH = f"Training_sets_{YEAR}/{TRAJECTORY_LENGTH}h/"
@@ -40,11 +40,11 @@ def main():
 
     #getData.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH) #choose nr of days
     
-    #getData.main2(months=MONTHS, filtered_path=FILTERED_PATH, year=YEAR) # all days in each month
+    getData.main2(months=MONTHS, filtered_path=FILTERED_PATH, year=YEAR) # all days in each month
     #concatParquets.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
     
-    #concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
-    cleanAIS_improved2.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH)
+    concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
+    #cleanAIS_improved2.main(months=MONTHS, concat_path=CONCAT_PATH, cleaned_path=CLEAN_PATH)
     #downSample.main(cleaned_path=CLEAN_PATH, resampled_path=RESAMPLE_PATH, step=RESAMPLE_STEP, months=MONTHS)
 
 
