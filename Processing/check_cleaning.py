@@ -25,8 +25,8 @@ def haversine(lat1, lon1, lat2, lon2, dt):
 
     return dist, speed
 
-new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2024_testy.parquet")
-old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean.parquet")
+new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2024_fancy_extract.parquet")
+old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean_2024.parquet")
 print("new: ", new_df.shape, " old: ", old_df.shape)
 print(new_df.columns, old_df.columns)
 
@@ -69,11 +69,11 @@ print(bad_with_neighbors[cols + ["is_high_speed"]].to_string(index=True))
 traj_id = "257437000-4"
 
 start_time = pd.Timestamp("2024-01-12 01:05:00")
-end_time   = pd.Timestamp("2024-01-12 01:09:00")
+end_time   = pd.Timestamp("2024-01-12 01:10:00")
 
 subset = (
     new_df[
-        (new_df["trajectory_id"] == traj_id) &
+        (new_df["mmsi"] == 257437000) &
         (new_df["date_time_utc"] >= start_time) &
         (new_df["date_time_utc"] <= end_time)
     ]
@@ -82,6 +82,7 @@ subset = (
 
 cols = [
     "date_time_utc",
+    "trajectory_id",
     "lat",
     "lon",
     "dt",
@@ -89,7 +90,7 @@ cols = [
     "speed_to_prev"
 ]
 
-#print(subset[cols].to_string(index=True))
+print(subset[cols].to_string(index=True))
 
 #plt.scatter(subset["lon"], subset["lat"])
 #plt.show()
@@ -101,7 +102,7 @@ def plot_mmsi(mmsi):
     print("OLD: ", old_dd["trajectory_id"].nunique())
 
     fig, (ax1, ax2) = plt.subplots(
-        1, 2, figsize=(14, 7), sharex=True, sharey=True
+        1, 2, figsize=(7, 4), sharex=True, sharey=True
     )
 
     # OLD

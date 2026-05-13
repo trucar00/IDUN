@@ -106,7 +106,7 @@ def extract_trajectories(df, time_threshold="60min"):
 
     return df.drop(columns=["dt", "traj_id"])
 
-def extract_trajectories2(df, max_gap="120min", max_speed=20):
+def extract_trajectories2(df, max_gap="60min", max_speed=20):
     df = df.copy()
     df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
     df = df.sort_values(["mmsi", "date_time_utc"])
@@ -334,17 +334,17 @@ def all(df):
     df = remove_duplicate_timestamps(df)
     df = remove_invalid(df)
     df = remove_stationary(df)
-    df = extract_trajectories(df)
+    df = extract_trajectories2(df)
     #df = remove_spike_fragments(df)
     #df = remove_trajectories_few_instances(df, min_instances=5)
     #df = reconnect_subtracks(df)
     df = remove_duplicate_positions(df)
     df = remove_trajectories_w_low_avg_speed(df)
-    df = remove_short_trajectories(df)
-    df = remove_trajectories_few_instances(df, min_instances=100)
+    #df = remove_short_trajectories(df)
+    #df = remove_trajectories_few_instances(df, min_instances=100)
     df = remove_spikes_three_point(df)
     df = reindex_trajectory_ids(df)
-    df = df.drop(columns=["dsrc", "imo", "ship_type", "maneuvre", "geom", "status", "rot", "true_heading", "length", "draught", "ais_class", "geometry_wkt"])
+    #df = df.drop(columns=["dsrc", "imo", "ship_type", "maneuvre", "geom", "status", "rot", "true_heading", "length", "draught", "ais_class", "geometry_wkt"])
     return df
 
 def main(months, concat_path, cleaned_path):
@@ -371,15 +371,15 @@ def main(months, concat_path, cleaned_path):
 
 if __name__ == "__main__":
     #main()
-    print(haversine(67.980330, 14.838186, 67.982895, 14.846458, 1))
+    #print(haversine(67.980330, 14.838186, 67.982895, 14.846458, 1))
    
-    """  df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
+    df = pd.read_parquet("Processed_AIS_2024/Concatenated/01.parquet")
 
     mmsis = df["mmsi"].drop_duplicates().head(10)
     df_small = df[df["mmsi"].isin(mmsis)].copy()
 
     df_small = all(df_small)
-    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_2024_testy.parquet", index=False) """
+    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_2024_fancy_extract.parquet", index=False)
 
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!
