@@ -1,7 +1,31 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
+import numpy as np
 
-new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_mix_2024_new.parquet")
+def haversine(lat1, lon1, lat2, lon2, dt):
+    R = 6371000 # Radius of the earth in meters
+
+    dLat = (lat2 - lat1) * math.pi / 180.0
+    dLon = (lon2 - lon1) * math.pi / 180.0
+
+    # convert to radians
+    lat1 = (lat1) * math.pi / 180.0
+    lat2 = (lat2) * math.pi / 180.0
+
+    # apply formulae
+    a = (pow(np.sin(dLat / 2), 2) + 
+         pow(np.sin(dLon / 2), 2) * 
+             np.cos(lat1) * np.cos(lat2))
+    
+    c = 2 * np.arcsin(np.sqrt(a))
+
+    dist = R * c
+    speed = (dist/dt)
+
+    return dist, speed
+
+new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2024_testy.parquet")
 old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean.parquet")
 print("new: ", new_df.shape, " old: ", old_df.shape)
 print(new_df.columns, old_df.columns)
@@ -9,10 +33,72 @@ print(new_df.columns, old_df.columns)
 new_df["date_time_utc"] = pd.to_datetime(new_df["date_time_utc"])
 old_df["date_time_utc"] = pd.to_datetime(old_df["date_time_utc"])
 
+g = new_df.groupby("trajectory_id", sort=False)
+new_df["prev_lat"] = g["lat"].shift(1)
+new_df["prev_lon"] = g["lon"].shift(1)
+
+new_df["prev_time"] = g["date_time_utc"].shift(1)
+new_df["dt"] = (new_df["date_time_utc"] - new_df["prev_time"]).dt.total_seconds()
+
+new_df["dist_to_prev"], new_df["speed_to_prev"] = haversine(
+    new_df["prev_lat"], new_df["prev_lon"],
+    new_df["lat"], new_df["lon"],
+    new_df["dt"]
+)
+
+cols = [
+    "mmsi", "trajectory_id", "date_time_utc",
+    "lat", "lon", "prev_lat", "prev_lon",
+    "dt", "dist_to_prev", "speed_to_prev"
+]
+
+new_df = new_df.sort_values(["trajectory_id", "date_time_utc"]).reset_index(drop=True)
+
+bad = new_df["speed_to_prev"] > 20
+
+bad_with_neighbors = new_df[
+    bad
+    | bad.groupby(new_df["trajectory_id"]).shift(1, fill_value=False)
+    | bad.groupby(new_df["trajectory_id"]).shift(-1, fill_value=False)
+].copy()
+
+bad_with_neighbors["is_high_speed"] = bad_with_neighbors["speed_to_prev"] > 20
+
+print(bad_with_neighbors[cols + ["is_high_speed"]].to_string(index=True))
+
+traj_id = "257437000-4"
+
+start_time = pd.Timestamp("2024-01-12 01:05:00")
+end_time   = pd.Timestamp("2024-01-12 01:09:00")
+
+subset = (
+    new_df[
+        (new_df["trajectory_id"] == traj_id) &
+        (new_df["date_time_utc"] >= start_time) &
+        (new_df["date_time_utc"] <= end_time)
+    ]
+    .sort_values("date_time_utc")
+)
+
+cols = [
+    "date_time_utc",
+    "lat",
+    "lon",
+    "dt",
+    "dist_to_prev",
+    "speed_to_prev"
+]
+
+#print(subset[cols].to_string(index=True))
+
+#plt.scatter(subset["lon"], subset["lat"])
+#plt.show()
 
 def plot_mmsi(mmsi):
     new_dd = new_df[new_df["mmsi"] == mmsi]
     old_dd = old_df[old_df["mmsi"] == mmsi]
+    print("NEW: ", new_dd["trajectory_id"].nunique())
+    print("OLD: ", old_dd["trajectory_id"].nunique())
 
     fig, (ax1, ax2) = plt.subplots(
         1, 2, figsize=(14, 7), sharex=True, sharey=True
@@ -34,7 +120,19 @@ def plot_mmsi(mmsi):
     # NEW
     for traj_id, d in new_dd.groupby("trajectory_id"):
         d = d.sort_values("date_time_utc")
+        # plot trajectory
         ax2.plot(d["lon"], d["lat"], ".", markersize=2)
+
+        # highlight suspicious points
+        high_speed = d[d["speed_to_prev"] > 20]
+
+        ax2.scatter(
+            high_speed["lon"],
+            high_speed["lat"],
+            color="red",
+            s=20,
+            label="speed > 20"
+        )
 
     ax2.set_title("New cleaning")
 
