@@ -303,11 +303,11 @@ def main(months, concat_path, cleaned_path):
         getfile = f"{concat_path}{month:02d}.parquet"
         savefile = f"{cleaned_path}{month:02d}.parquet"
         if os.path.exists(getfile):
-            print("Cleaning up: ", getfile)
             df = pd.read_parquet(getfile, engine="pyarrow")
+            print("Cleaning up: ", getfile, " --- ROWS BEFORE: ", len(df))
             df = all(df)
             df.to_parquet(savefile, engine="pyarrow", compression="snappy")
-            print("Saved cleaned data to: ", savefile)          
+            print("Saved cleaned data to: ", savefile, " --- ROWS AFTER: ", len(df))          
         else:
             print("Missing: ", getfile)
 
