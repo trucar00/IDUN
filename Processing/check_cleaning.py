@@ -25,8 +25,8 @@ def haversine(lat1, lon1, lat2, lon2, dt):
 
     return dist, speed
 
-new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2024_fancy_extract.parquet")
-old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean_2024.parquet")
+new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2022_clean.parquet")
+old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean_2022.parquet")
 print("new: ", new_df.shape, " old: ", old_df.shape)
 print(new_df.columns, old_df.columns)
 
@@ -68,8 +68,8 @@ print(bad_with_neighbors[cols + ["is_high_speed"]].to_string(index=True))
 
 traj_id = "257437000-4"
 
-start_time = pd.Timestamp("2024-01-12 01:05:00")
-end_time   = pd.Timestamp("2024-01-12 01:10:00")
+start_time = pd.Timestamp("2024-01-16 22:17:00")
+end_time   = pd.Timestamp("2024-01-16 22:20:00")
 
 subset = (
     new_df[
@@ -90,10 +90,15 @@ cols = [
     "speed_to_prev"
 ]
 
-print(subset[cols].to_string(index=True))
+#print(subset[cols].to_string(index=True))
 
-#plt.scatter(subset["lon"], subset["lat"])
-#plt.show()
+fig, ax = plt.subplots(figsize=(8, 8))
+for traj, d in subset.groupby("trajectory_id"):
+    print(traj)
+    ax.scatter(d["lon"], d["lat"])
+
+plt.scatter(3.806065, 60.768960, color="red")
+plt.show()
 
 def plot_mmsi(mmsi):
     new_dd = new_df[new_df["mmsi"] == mmsi]
@@ -136,10 +141,6 @@ def plot_mmsi(mmsi):
         )
 
     ax2.set_title("New cleaning")
-
-    # Equal aspect ratio (important for geo plots)
-    ax1.set_aspect('equal', adjustable='box')
-    ax2.set_aspect('equal', adjustable='box')
 
     plt.suptitle(f"MMSI: {mmsi}")
     plt.tight_layout()
