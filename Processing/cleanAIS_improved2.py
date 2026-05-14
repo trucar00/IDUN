@@ -283,7 +283,7 @@ def all(df):
     df = remove_duplicate_positions(df)
     df = remove_impossible_jumps(df)
 
-    while True:
+    while True: # maybe this is too big altså
         before = len(df)
         df = remove_spikes_three_point(df)
         print(before, "->", len(df))
