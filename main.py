@@ -6,7 +6,7 @@ from Processing import getData, concatParquets, cleanAIS_improved2, downSample #
 
 # Define the time period we are interested in
 YEAR = 2024
-MONTHS = 2
+MONTHS = 12
 DAYS = 30
 
 TRAJECTORY_LENGTH = 2 #hours
