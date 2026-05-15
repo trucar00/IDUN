@@ -5,7 +5,7 @@ from Processing import getData, concatParquets, cleanAIS_improved2, downSample #
 # Need folder paths, anc creation of these folders if they dont exist?
 
 # Define the time period we are interested in
-YEAR = 2023
+YEAR = 2022
 MONTHS = 12
 DAYS = 30
 

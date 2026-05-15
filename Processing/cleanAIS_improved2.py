@@ -299,7 +299,7 @@ def all(df):
 def main(months, concat_path, cleaned_path):
     start = time()
 
-    for month in range(9,months+1):
+    for month in range(1,months+1):
         getfile = f"{concat_path}{month:02d}.parquet"
         savefile = f"{cleaned_path}{month:02d}.parquet"
         if os.path.exists(getfile):
