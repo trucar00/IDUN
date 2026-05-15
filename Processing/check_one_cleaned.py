@@ -26,7 +26,7 @@ def haversine(lat1, lon1, lat2, lon2, dt):
 
     return dist, speed
 
-df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_2022_test.parquet")
+df = pd.read_parquet("Processed_AIS_2024/Cleaned_pq/07_2024_new.parquet", engine="pyarrow")
 df["date_time_utc"] = pd.to_datetime(df["date_time_utc"])
 df = df.sort_values(by="date_time_utc")
 
@@ -103,7 +103,7 @@ def plot_trajectory_pairs(mmsi):
         ax.legend()
         plt.show()
 
-plot_trajectory_pairs(257062150)
+#plot_trajectory_pairs(257062150)
 
 df_dbg = df.sort_values(["mmsi", "date_time_utc"]).copy()
 
@@ -120,12 +120,13 @@ df_dbg["dist"], df_dbg["implied_speed_ms"] = haversine(
 )
 
 df_dbg[["date_time_utc", "lat", "lon", "speed", "dt", "dist", "implied_speed_ms", "trajectory_id"]]
-df_dbg.to_csv("checkkkyyy.csv", index=False)
+#df_dbg.to_csv("checkkkyyy.csv", index=False)
 
 print(df["trajectory_id"].unique())
 
 print(df["mmsi"].nunique())
 df = df.loc[df["mmsi"] >= 250000000].copy()
+df = df.loc[df["lon"] >= 5].copy()
 
 
 def plot_mmsi(mmsi):
