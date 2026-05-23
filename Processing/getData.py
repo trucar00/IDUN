@@ -28,7 +28,7 @@ def main2(months, filtered_path, year):
     start = time()
     print("Getting data from NTNUs copy of AIS-data from Kystverket.")
     for month in range(1, months+1):
-        pattern = f"../../Data-preMaster/{year}/date_utc={year}-{month:02d}-*" # ADD Y: for running locally
+        pattern = f"../../Data/{year}/date_utc={year}-{month:02d}-*" # ADD Y: for running locally
         folders = sorted(glob.glob(pattern))
         if not folders:
             print("No folders for month:", month)
