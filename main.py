@@ -40,7 +40,7 @@ def main():
 
     #getData.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH) #choose nr of days
     
-    getData.main2(months=MONTHS, filtered_path=FILTERED_PATH, year=YEAR) # all days in each month
+    getData.main3(months=MONTHS, filtered_path=FILTERED_PATH, year=YEAR) # all days in each month
     #concatParquets.main(months=MONTHS, days=DAYS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)
     
     #concatParquets.main2(months=MONTHS, filtered_path=FILTERED_PATH, concat_path=CONCAT_PATH)

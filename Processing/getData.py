@@ -33,7 +33,7 @@ def main2(months, filtered_path, year):
         if not folders:
             print("No folders for month:", month)
             continue
-        day = 0
+        day = 28
         for folder in folders:
             for entry in os.scandir(folder):
                 if entry.is_file() and entry.name.endswith(".parquet"):
@@ -43,6 +43,52 @@ def main2(months, filtered_path, year):
 
     end = time()
     print("Done! It took: ", (end-start)/60, " minutes.")
+
+
+def main3(months, filtered_path, year):
+    start = time()
+
+    print("Getting data from NTNUs copy of AIS-data from Kystverket.")
+
+    restart_from = f"{year}-08-28"
+
+    started = False
+
+    for month in range(1, months + 1):
+
+        pattern = f"../../Data/{year}/date_utc={year}-{month:02d}-*"
+        folders = sorted(glob.glob(pattern))
+
+        if not folders:
+            print("No folders for month:", month)
+            continue
+
+        for folder in folders:
+
+            # Extract date from folder name
+            folder_date = folder.split("date_utc=")[-1]
+
+            # Skip until we reach restart date
+            if not started:
+                if folder_date < restart_from:
+                    continue
+                started = True
+
+            for entry in os.scandir(folder):
+                if entry.is_file() and entry.name.endswith(".parquet"):
+
+                    print("Processing file:", entry.path)
+
+                    output_name = f"{filtered_path}{folder_date}.parquet"
+
+                    dataProcessing.readFilterSave(
+                        entry.path,
+                        output_name
+                    )
+
+    end = time()
+
+    print("Done! It took:", (end - start) / 60, "minutes.")
 
 
 if __name__ == "__main__":
