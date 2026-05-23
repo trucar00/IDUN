@@ -79,7 +79,9 @@ def main3(months, filtered_path, year):
 
                     print("Processing file:", entry.path)
 
-                    output_name = f"{filtered_path}{folder_date}.parquet"
+                    month_day = folder_date[5:]   # gets "08-28" from "2025-08-28"
+
+                    output_name = f"{filtered_path}{month_day}.parquet"
 
                     dataProcessing.readFilterSave(
                         entry.path,
