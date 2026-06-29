@@ -320,14 +320,14 @@ if __name__ == "__main__":
     #main()
     #print(haversine(67.980330, 14.838186, 67.982895, 14.846458, 1))
    
-    df = pd.read_parquet("Processed_AIS_2024/Concatenated/russian_trawler.parquet")
+    df = pd.read_parquet("Processed_AIS_2024/Concatenated/01_2023.parquet")
+    print(df.columns)
 
-    #mmsis = df["mmsi"].drop_duplicates().head(10)
-    #df_small = df[df["mmsi"].isin(mmsis)].copy()
+    mmsis = df["mmsi"].drop_duplicates().head(10)
+    df_small = df[df["mmsi"].isin(mmsis)].copy()
 
-    #df_small = all(df_small)
-    df = all(df)
-    df.to_parquet("Processed_AIS_2024/Cleaned/russian_trawler_cleaned.parquet", index=False)
+    df_small = all(df_small)
+    df_small.to_parquet("Processed_AIS_2024/Cleaned/01_new_clean_2023.parquet", index=False)
 
     # NEW CLEANING
     # this one works very good! preserves the most data! with the old cleaning we lost a lot of data due to very strict acceleration filter!

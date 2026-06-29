@@ -25,9 +25,9 @@ def haversine(lat1, lon1, lat2, lon2, dt):
 
     return dist, speed
 
-new_df = pd.read_parquet("Processed_AIS_2024/Cleaned_pq/01_2024_new.parquet")
-#old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean_2022.parquet")
-old_df = pd.read_csv("Processed_AIS_2024/Cleaned/01_2024_old_clean.csv")
+new_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_new_clean_2023.parquet")
+old_df = pd.read_parquet("Processed_AIS_2024/Cleaned/01_old_clean_2023.parquet")
+#old_df = pd.read_csv("Processed_AIS_2024/Cleaned/01_old_clean_2023.csv")
 new_df = new_df.loc[new_df["mmsi"] >= 250000000].copy()
 old_df = old_df.loc[old_df["mmsi"] >= 250000000].copy()
 print("new: ", new_df.shape, new_df["mmsi"].nunique(), " old: ", old_df.shape, old_df["mmsi"].nunique())
